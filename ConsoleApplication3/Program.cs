@@ -163,7 +163,8 @@ namespace ConsoleApplication3
             var delimiter = "\t";
             using (var writer = new System.IO.StreamWriter("hello.txt"))
             {
-                foreach (Table i in db1.Tables.Where(s => s.location != null))
+                List<Table> lstData = dal.FetchTableDataWhereLocIsNotNull();
+                foreach (Table i in lstData)
                 {
                     writer.WriteLine(i.Case_no + delimiter + i.billDate + delimiter + i.eventCode + delimiter + i.billRates + delimiter + i.billUnits + delimiter + i.clientID + delimiter + i.location);
                 }

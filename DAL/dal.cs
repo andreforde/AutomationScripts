@@ -29,5 +29,13 @@ namespace DAL
                 db.SaveChanges();
             }
         }
+
+        public static List<Table> FetchTableDataWhereLocIsNotNull()
+        {
+            using (var db = new XEEEntities())
+            {
+                return db.Tables.Where(s => s.location != null).ToList();
+            }
+        }
     }
 }
