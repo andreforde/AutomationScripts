@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConsoleApplication3
+namespace DAL
 {
     using System;
     using System.Collections.Generic;

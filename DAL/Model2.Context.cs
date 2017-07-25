@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ConsoleApplication3
+namespace DAL
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class Entities1 : DbContext
+    public partial class XEEEntities : DbContext
     {
-        public Entities1()
-            : base("name=Entities1")
+        public XEEEntities()
+            : base("name=XEEEntities")
         {
         }
     

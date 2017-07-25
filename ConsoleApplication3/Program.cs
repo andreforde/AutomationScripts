@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
+using DAL;
 
 namespace ConsoleApplication3
 {
@@ -44,15 +45,7 @@ namespace ConsoleApplication3
         static void Main(string[] args)
         {
             //removing previous data from table
-            using (var db = new Entities1())
-            {
-                List<Table> ta = db.Tables.ToList();
-                foreach(Table i in ta)
-                {
-                    db.Tables.Remove(i);
-                }
-                db.SaveChanges();
-            }
+            DAL.dal.RemovePreviousOccurences();
             //................
             IWebDriver gc = new ChromeDriver();
             
@@ -96,11 +89,7 @@ namespace ConsoleApplication3
                     table.billUnits = p[4];
                     table.clientID = p[5];
                     table.location = null;
-                    using (var db = new Entities1())
-                    {
-                        db.Tables.Add(table);
-                        db.SaveChanges();
-                    }
+                    dal.SaveTableData(table);
                 }
                 else
                     if (count == 6)
@@ -113,11 +102,7 @@ namespace ConsoleApplication3
                     table.billUnits = p[4];
                     table.clientID = p[5];
                     table.location = p[6];
-                    using (var db = new Entities1())
-                    {
-                        db.Tables.Add(table);
-                        db.SaveChanges();
-                    }
+                    dal.SaveTableData(table);
                 }
             }
             foreach (IWebElement c in gc.FindElements(By.ClassName("AlternatingItem")))
@@ -145,11 +130,7 @@ namespace ConsoleApplication3
                     table.billUnits = p[4];
                     table.clientID = p[5];
                     table.location = null;
-                    using (var db = new Entities1())
-                    {
-                        db.Tables.Add(table);
-                        db.SaveChanges();
-                    }
+                    dal.SaveTableData(table);
                 }
                 else
                     if (count == 6)
@@ -162,27 +143,23 @@ namespace ConsoleApplication3
                     table.billUnits = p[4];
                     table.clientID = p[5];
                     table.location = p[6];
-                    using (var db = new Entities1())
-                    {
-                        db.Tables.Add(table);
-                        db.SaveChanges();
-                    }
+                    dal.SaveTableData(table);
                 }
 
             }
             //.........
-            var db1 = new Entities1();
+            //var db1 = new Entities1();
 
             Console.WriteLine("Data extraction done ;");
             Console.WriteLine("Data with location :");
-            foreach (Table i in db1.Tables.Where(s => s.location == null))
-            {
-                //gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next");
-                //System.Threading.Thread.Sleep(5000);
-                //gc.FindElements(By.ClassName("cs-header-module-item"))[2].Click();
-                Program test = new Program();
-                //test.Create(gc,i);
-            }
+            //foreach (Table i in db1.Tables.Where(s => s.location == null))
+            //{
+            //    //gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next");
+            //    //System.Threading.Thread.Sleep(5000);
+            //    //gc.FindElements(By.ClassName("cs-header-module-item"))[2].Click();
+            //    Program test = new Program();
+            //    //test.Create(gc,i);
+            //}
             var delimiter = "\t";
             using (var writer = new System.IO.StreamWriter("hello.txt"))
             {

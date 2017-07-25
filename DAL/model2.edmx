@@ -4,8 +4,8 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="DatabaseFirst.BloggingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Table">
+    <Schema Namespace="XEEModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Tables">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -18,14 +18,16 @@
           <Property Name="location" Type="nvarchar" MaxLength="50" />
           <Property Name="Case_no" Type="varchar" MaxLength="50" />
         </EntityType>
-        <EntityContainer Name="DatabaseFirstBloggingModelStoreContainer">
-          <EntitySet Name="Table" EntityType="Self.Table" Schema="dbo" store:Type="Tables" />
+        <EntityContainer Name="XEEModelStoreContainer">
+          <EntitySet Name="Tables" EntityType="Self.Tables" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="DatabaseFirst.BloggingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="XEEModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="XEEEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="Tables" EntityType="XEEModel.Table" />
+        </EntityContainer>
         <EntityType Name="Table">
           <Key>
             <PropertyRef Name="Id" />
@@ -39,26 +41,23 @@
           <Property Name="location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Case_no" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="Entities1" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Tables" EntityType="Self.Table" />
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="DatabaseFirstBloggingModelStoreContainer" CdmEntityContainer="Entities1">
+        <EntityContainerMapping StorageEntityContainer="XEEModelStoreContainer" CdmEntityContainer="XEEEntities" >
           <EntitySetMapping Name="Tables">
-            <EntityTypeMapping TypeName="DatabaseFirst.BloggingModel.Table">
-              <MappingFragment StoreEntitySet="Table">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="billDate" ColumnName="billDate" />
-                <ScalarProperty Name="eventCode" ColumnName="eventCode" />
-                <ScalarProperty Name="billRates" ColumnName="billRates" />
-                <ScalarProperty Name="billUnits" ColumnName="billUnits" />
-                <ScalarProperty Name="clientID" ColumnName="clientID" />
-                <ScalarProperty Name="location" ColumnName="location" />
+            <EntityTypeMapping TypeName="XEEModel.Table">
+              <MappingFragment StoreEntitySet="Tables">
                 <ScalarProperty Name="Case_no" ColumnName="Case_no" />
+                <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="clientID" ColumnName="clientID" />
+                <ScalarProperty Name="billUnits" ColumnName="billUnits" />
+                <ScalarProperty Name="billRates" ColumnName="billRates" />
+                <ScalarProperty Name="eventCode" ColumnName="eventCode" />
+                <ScalarProperty Name="billDate" ColumnName="billDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
