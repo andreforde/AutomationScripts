@@ -7,6 +7,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
 using DAL;
+using System.IO;
 
 namespace ConsoleApplication3
 {
@@ -61,7 +62,17 @@ namespace ConsoleApplication3
             //................
             try
             {
-                IWebDriver gc = new ChromeDriver();
+                var chromeOptions = new ChromeOptions
+                {
+                    BinaryLocation = @"Canary\chrome.exe"
+                };
+
+                chromeOptions.AddArguments(new List<string>() { "headless", "disable-gpu" });
+
+                ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                service.HideCommandPromptWindow = true;
+
+                IWebDriver gc = new ChromeDriver(service, chromeOptions);
 
                 //...loging in 
                 gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next/Login");
@@ -166,8 +177,6 @@ namespace ConsoleApplication3
             {
                 log.Error("Error occured while exctracting data:" + ex.Message);
             }
-            //.........
-            //var db1 = new Entities1();
 
             Console.WriteLine("Data extraction done ;");
             Console.WriteLine("Data with location :");
@@ -180,16 +189,41 @@ namespace ConsoleApplication3
             //    //test.Create(gc,i);
             //}
 
-            //Create an error log for records with loc = null
-            List<Table> lstDataLocNull = dal.FetchTableDataWhereLocIsNull();
-            foreach (Table i in lstDataLocNull)
-            {
+            //Clear previous failure logs
+            string[] filePaths = Directory.GetFiles(@"FailureLogs\");
+            foreach (string filePath in filePaths)
+                File.Delete(filePath);
 
-            }
-                Emailing.Email.SendEmail("", "", "", "", "");
+            //Create an error log for records with loc = null
+            var delimiter = "\t";
+            List<Table> lstDataLocNull = new List<Table>();
+            string FileName = Guid.NewGuid().ToString();
             try
             {
-                var delimiter = "\t";
+                lstDataLocNull = dal.FetchTableDataWhereLocIsNull();
+                
+                using (var writer = new System.IO.StreamWriter("FailureLogs" + @"\" + FileName + ".txt"))
+                {
+                    foreach (Table i in lstDataLocNull)
+                    {
+                        writer.WriteLine(i.Case_no + delimiter + i.billDate + delimiter + i.eventCode + delimiter + i.billRates + delimiter + i.billUnits + delimiter + i.clientID + delimiter + i.location);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error occured while creating error records csv:" + ex.Message);
+            }
+
+            //Send invalid records log email
+            if (Directory.GetFiles("FailureLogs").Count() != 0)
+            {
+                Emailing.Email.SendEmail("", "", "", "", "");
+            }
+
+            //Create csv for successfull records with loc <> null
+            try
+            {
                 using (var writer = new System.IO.StreamWriter("hello.txt"))
                 {
                     List<Table> lstData = dal.FetchTableDataWhereLocIsNotNull();
