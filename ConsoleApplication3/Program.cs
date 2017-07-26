@@ -12,6 +12,8 @@ namespace ConsoleApplication3
 {
     class Program
     {
+        //Here is the once-per-class call to initialize the log object
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public void Create(IWebDriver gc, Table t)
         {
             gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next/peo/client");
@@ -44,108 +46,125 @@ namespace ConsoleApplication3
         }
         static void Main(string[] args)
         {
-            //removing previous data from table
-            DAL.dal.RemovePreviousOccurences();
-            //................
-            IWebDriver gc = new ChromeDriver();
-            
-            //...loging in 
-            gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next/Login");
-            gc.FindElement(By.Name("LoginID")).SendKeys("lightbot") ; 
-            gc.FindElement(By.Name("Password")).SendKeys("RPAuser!");
-            gc.FindElement(By.Name("Password")).SendKeys(Keys.Enter);
-            //.............
-            gc.Navigate().GoToUrl("https://cwp.clientspace.net/BusinessIntelligence/ReportViewer.aspx?rn=LightBot+Admins+Only\\AEE1+Ancillary+Risk+Fees");
-            gc.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-            gc.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-            gc.FindElement(By.Id("ndbfc0")).Click();
-            gc.FindElements(By.TagName("option"))[3].Click();
-            gc.FindElement(By.Id("updateBtnP")).Click();
-            Console.WriteLine("going to sleep");
-            System.Threading.Thread.Sleep(10000);
-            string check = null;
-            ICollection<IWebElement> a = gc.FindElements(By.ClassName("ReportItem"));
-            Console.WriteLine("value : " + a.Count);
-            foreach (IWebElement b in a)
+            log4net.Config.XmlConfigurator.Configure();
+           
+            try
             {
-                check = b.Text;
-                check = check.Replace(' ', '_');
-                int count = 0;
-                foreach (char c in check)
+                //removing previous data from table
+                DAL.dal.RemovePreviousOccurences();
+            }
+            catch(Exception ex)
+            {
+                log.Error(ex.Message);
+            }
+
+            //................
+            try
+            {
+                IWebDriver gc = new ChromeDriver();
+
+                //...loging in 
+                gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next/Login");
+                gc.FindElement(By.Name("LoginID")).SendKeys("lightbot");
+                gc.FindElement(By.Name("Password")).SendKeys("RPAuser!");
+                gc.FindElement(By.Name("Password")).SendKeys(Keys.Enter);
+                //.............
+                gc.Navigate().GoToUrl("https://cwp.clientspace.net/BusinessIntelligence/ReportViewer.aspx?rn=LightBot+Admins+Only\\AEE1+Ancillary+Risk+Fees");
+                gc.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+                gc.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
+                gc.FindElement(By.Id("ndbfc0")).Click();
+                gc.FindElements(By.TagName("option"))[3].Click();
+                gc.FindElement(By.Id("updateBtnP")).Click();
+                Console.WriteLine("going to sleep");
+                System.Threading.Thread.Sleep(10000);
+                string check = null;
+                ICollection<IWebElement> a = gc.FindElements(By.ClassName("ReportItem"));
+                Console.WriteLine("value : " + a.Count);
+                foreach (IWebElement b in a)
                 {
-                    if (c.Equals('_'))
+                    check = b.Text;
+                    check = check.Replace(' ', '_');
+                    int count = 0;
+                    foreach (char c in check)
                     {
-                        count++;
+                        if (c.Equals('_'))
+                        {
+                            count++;
+                        }
+                    }
+                    string[] p = check.Split('_');
+                    if (count == 5)
+                    {
+                        var table = new Table();
+                        table.Case_no = p[0];
+                        table.billDate = p[1];
+                        table.eventCode = p[2];
+                        table.billRates = p[3];
+                        table.billUnits = p[4];
+                        table.clientID = p[5];
+                        table.location = null;
+                        dal.SaveTableData(table);
+                    }
+                    else
+                        if (count == 6)
+                    {
+                        var table = new Table();
+                        table.Case_no = p[0];
+                        table.billDate = p[1];
+                        table.eventCode = p[2];
+                        table.billRates = p[3];
+                        table.billUnits = p[4];
+                        table.clientID = p[5];
+                        table.location = p[6];
+                        dal.SaveTableData(table);
                     }
                 }
-                string[] p = check.Split('_');
-                if (count == 5)
+                foreach (IWebElement c in gc.FindElements(By.ClassName("AlternatingItem")))
                 {
-                    var table = new Table();
-                    table.Case_no = p[0];
-                    table.billDate = p[1];
-                    table.eventCode = p[2];
-                    table.billRates = p[3];
-                    table.billUnits = p[4];
-                    table.clientID = p[5];
-                    table.location = null;
-                    dal.SaveTableData(table);
-                }
-                else
-                    if (count == 6)
-                {
-                    var table = new Table();
-                    table.Case_no = p[0];
-                    table.billDate = p[1];
-                    table.eventCode = p[2];
-                    table.billRates = p[3];
-                    table.billUnits = p[4];
-                    table.clientID = p[5];
-                    table.location = p[6];
-                    dal.SaveTableData(table);
+
+                    check = c.Text;
+
+                    check = check.Replace(' ', '_');
+                    int count = 0;
+                    foreach (char d in check)
+                    {
+                        if (d == '_')
+                        {
+                            count++;
+                        }
+                    }
+                    string[] p = check.Split('_');
+                    if (count == 5)
+                    {
+                        var table = new Table();
+                        table.Case_no = p[0];
+                        table.billDate = p[1];
+                        table.eventCode = p[2];
+                        table.billRates = p[3];
+                        table.billUnits = p[4];
+                        table.clientID = p[5];
+                        table.location = null;
+                        dal.SaveTableData(table);
+                    }
+                    else
+                        if (count == 6)
+                    {
+                        var table = new Table();
+                        table.Case_no = p[0];
+                        table.billDate = p[1];
+                        table.eventCode = p[2];
+                        table.billRates = p[3];
+                        table.billUnits = p[4];
+                        table.clientID = p[5];
+                        table.location = p[6];
+                        dal.SaveTableData(table);
+                    }
+
                 }
             }
-            foreach (IWebElement c in gc.FindElements(By.ClassName("AlternatingItem")))
+            catch(Exception ex)
             {
-
-                check = c.Text;
-
-                check = check.Replace(' ', '_');
-                int count = 0;
-                foreach (char d in check)
-                {
-                    if (d == '_')
-                    {
-                        count++;
-                    }
-                }
-                string[] p = check.Split('_');
-                if (count == 5)
-                {
-                    var table = new Table();
-                    table.Case_no = p[0];
-                    table.billDate = p[1];
-                    table.eventCode = p[2];
-                    table.billRates = p[3];
-                    table.billUnits = p[4];
-                    table.clientID = p[5];
-                    table.location = null;
-                    dal.SaveTableData(table);
-                }
-                else
-                    if (count == 6)
-                {
-                    var table = new Table();
-                    table.Case_no = p[0];
-                    table.billDate = p[1];
-                    table.eventCode = p[2];
-                    table.billRates = p[3];
-                    table.billUnits = p[4];
-                    table.clientID = p[5];
-                    table.location = p[6];
-                    dal.SaveTableData(table);
-                }
-
+                log.Error("Error occured while exctracting data:" + ex.Message);
             }
             //.........
             //var db1 = new Entities1();
@@ -160,16 +179,30 @@ namespace ConsoleApplication3
             //    Program test = new Program();
             //    //test.Create(gc,i);
             //}
-            var delimiter = "\t";
-            using (var writer = new System.IO.StreamWriter("hello.txt"))
+
+            //Create an error log for records with loc = null
+            List<Table> lstDataLocNull = dal.FetchTableDataWhereLocIsNull();
+            foreach (Table i in lstDataLocNull)
             {
-                List<Table> lstData = dal.FetchTableDataWhereLocIsNotNull();
-                foreach (Table i in lstData)
+
+            }
+                Emailing.Email.SendEmail("", "", "", "", "");
+            try
+            {
+                var delimiter = "\t";
+                using (var writer = new System.IO.StreamWriter("hello.txt"))
                 {
-                    writer.WriteLine(i.Case_no + delimiter + i.billDate + delimiter + i.eventCode + delimiter + i.billRates + delimiter + i.billUnits + delimiter + i.clientID + delimiter + i.location);
+                    List<Table> lstData = dal.FetchTableDataWhereLocIsNotNull();
+                    foreach (Table i in lstData)
+                    {
+                        writer.WriteLine(i.Case_no + delimiter + i.billDate + delimiter + i.eventCode + delimiter + i.billRates + delimiter + i.billUnits + delimiter + i.clientID + delimiter + i.location);
+                    }
                 }
             }
-
+            catch(Exception ex)
+            {
+                log.Error("Error occured while creating csv:" + ex.Message);
+            }
         }
         
     }

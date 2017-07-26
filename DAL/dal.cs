@@ -37,5 +37,13 @@ namespace DAL
                 return db.Tables.Where(s => s.location != null).ToList();
             }
         }
+
+        public static List<Table> FetchTableDataWhereLocIsNull()
+        {
+            using (var db = new XEEEntities())
+            {
+                return db.Tables.Where(s => s.location == null).ToList();
+            }
+        }
     }
 }
