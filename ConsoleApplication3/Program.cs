@@ -62,17 +62,17 @@ namespace ConsoleApplication3
             //................
             try
             {
-                var chromeOptions = new ChromeOptions
+                var chromeOptions1 = new ChromeOptions
                 {
                     BinaryLocation = @"Canary\chrome.exe"
                 };
 
-                chromeOptions.AddArguments(new List<string>() { "headless", "disable-gpu" });
+                chromeOptions1.AddArguments(new List<string>() { "headless", "disable-gpu" });
 
-                ChromeDriverService service = ChromeDriverService.CreateDefaultService();
-                service.HideCommandPromptWindow = true;
+                ChromeDriverService service1 = ChromeDriverService.CreateDefaultService();
+                service1.HideCommandPromptWindow = true;
 
-                IWebDriver gc = new ChromeDriver(service, chromeOptions);
+                IWebDriver gc = new ChromeDriver(service1, chromeOptions1);
 
                 //...loging in 
                 gc.Navigate().GoToUrl("https://cwp.clientspace.net/Next/Login");
@@ -172,6 +172,8 @@ namespace ConsoleApplication3
                     }
 
                 }
+
+
             }
             catch(Exception ex)
             {
@@ -218,7 +220,7 @@ namespace ConsoleApplication3
             //Send invalid records log email
             if (Directory.GetFiles("FailureLogs").Count() != 0)
             {
-                Emailing.Email.SendEmail("", "", "", "", "");
+                //Emailing.Email.SendEmail("", "", "", "", "");
             }
 
             //Create csv for successfull records with loc <> null
@@ -236,6 +238,78 @@ namespace ConsoleApplication3
             catch(Exception ex)
             {
                 log.Error("Error occured while creating csv:" + ex.Message);
+            }
+
+
+
+        Start:
+            var chromeOptions = new ChromeOptions
+            {
+                BinaryLocation = @"Canary\chrome.exe"
+            };
+
+            chromeOptions.AddArguments(new List<string>() { "headless", "disable-gpu" });
+
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+            service.HideCommandPromptWindow = true;
+
+            IWebDriver gc1 = new ChromeDriver(service, chromeOptions);
+            gc1.Navigate().GoToUrl("https://ctw.prismhr.com/ctw/dbweb.asp?dbcgm=1");
+            System.Threading.Thread.Sleep(1000);
+            gc1.FindElement(By.XPath("//*[@id='text4v1']")).SendKeys("lightbot");
+            gc1.FindElement(By.XPath("//*[@id='password6v1']")).SendKeys("RPAuser1!");
+            gc1.FindElement(By.XPath("//*[@id='button8v1']")).Click();
+            System.Threading.Thread.Sleep(1000);
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).Click();
+            //gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("C");
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("c");
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("l");
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("i");
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("e");
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("n");
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys("t");
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys(" bill");
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys(Keys.Backspace);
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys(Keys.Backspace);
+            System.Threading.Thread.Sleep(1000);
+
+            gc1.FindElement(By.XPath("//*[@id='text31v1']")).SendKeys(Keys.Enter);
+            System.Threading.Thread.Sleep(10000);
+
+            //gc1.FindElement(By.XPath("//*[@id='button31v2']"));
+            System.Threading.Thread.Sleep(10000);
+
+            gc1.FindElement(By.XPath("//*[@id='button31v2']")).Click();
+
+            System.Threading.Thread.Sleep(10000);
+            Console.WriteLine(gc1.Url);
+            String current = gc1.CurrentWindowHandle;
+            foreach (String winHandle in gc1.WindowHandles)
+            {
+                gc1.SwitchTo().Window(winHandle);
+            }
+            //sometimes the upload window doesn't open
+            if (gc1.CurrentWindowHandle != current)
+            {
+                gc1.FindElement(By.XPath("//*[@id='fname']")).SendKeys(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\\hello.txt"); //put the full path of file here
+
+                gc1.FindElement(By.XPath("//*[@id='submit1']")).Click();
+
+                System.Threading.Thread.Sleep(1000);
+                gc1.FindElement(By.XPath("//*[@id='BUTTON1']")).Click();
+
+            }
+            else
+            {
+                gc1.Close();
+                gc1.Dispose();
+                goto Start;
             }
         }
         
