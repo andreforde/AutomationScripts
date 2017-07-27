@@ -25,9 +25,9 @@ namespace Emailing
                 mail.IsBodyHtml = false;
                 SmtpClient smtp = new SmtpClient();
                 smtp.Host = ConfigurationManager.AppSettings["SMTPServer"];
-                NetworkCredential networkCredential = new NetworkCredential(ConfigurationManager.AppSettings["UserID"], ConfigurationManager.AppSettings["Password"]);
-                smtp.UseDefaultCredentials = true;
-                smtp.Credentials = networkCredential;
+                //NetworkCredential networkCredential = new NetworkCredential(ConfigurationManager.AppSettings["UserID"], ConfigurationManager.AppSettings["Password"]);
+                //smtp.UseDefaultCredentials = true;
+                //smtp.Credentials = networkCredential;
                 smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
                 smtp.Send(mail);
             }

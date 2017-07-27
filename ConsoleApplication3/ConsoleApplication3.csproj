@@ -147,6 +147,7 @@
     <None Include="bin\Debug\Canary\61.0.3116.0\WidevineCdm\manifest.json" />
     <None Include="bin\Debug\Canary\61.0.3116.0\WidevineCdm\_platform_specific\win_x64\widevinecdm.dll.sig" />
     <None Include="bin\Debug\Canary\61.0.3116.0\WidevineCdm\_platform_specific\win_x64\widevinecdmadapter.dll.sig" />
+    <None Include="bin\Debug\Canary\Dictionaries\en-US-7-1.bdic" />
     <None Include="bin\Debug\ConsoleApplication3.exe.config" />
     <None Include="bin\Debug\ConsoleApplication3.vshost.exe.config" />
     <None Include="bin\Debug\ConsoleApplication3.vshost.exe.manifest" />

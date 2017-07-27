@@ -10,7 +10,7 @@ namespace DAL
     {
         public static void RemovePreviousOccurences()
         {
-            using (var db = new XEEEntities())
+            using (var db = new XEEEntities1())
             {
                 List<Table> ta = db.Tables.ToList();
                 foreach (Table i in ta)
@@ -23,7 +23,7 @@ namespace DAL
 
         public static void SaveTableData(Table table)
         {
-            using (var db = new XEEEntities())
+            using (var db = new XEEEntities1())
             {
                 db.Tables.Add(table);
                 db.SaveChanges();
@@ -32,7 +32,7 @@ namespace DAL
 
         public static List<Table> FetchTableDataWhereLocIsNotNull()
         {
-            using (var db = new XEEEntities())
+            using (var db = new XEEEntities1())
             {
                 return db.Tables.Where(s => s.location != null).ToList();
             }
@@ -40,7 +40,7 @@ namespace DAL
 
         public static List<Table> FetchTableDataWhereLocIsNull()
         {
-            using (var db = new XEEEntities())
+            using (var db = new XEEEntities1())
             {
                 return db.Tables.Where(s => s.location == null).ToList();
             }
